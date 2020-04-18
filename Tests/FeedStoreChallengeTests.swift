@@ -7,23 +7,25 @@ import FeedStoreChallenge
 
 class InMemoryFeedStore: FeedStore {
 
-    private var cache: [(feeds: [LocalFeedImage], timestamp: Date)] = []
+    private var feed: [LocalFeedImage]?
+    private var timestamp: Date?
 
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         fatalError("Not implemented yet.")
     }
 
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        self.cache.append((feeds: feed, timestamp: timestamp))
+        self.feed = feed
+        self.timestamp = timestamp
         completion(nil)
     }
 
     func retrieve(completion: @escaping RetrievalCompletion) {
-        guard self.cache.count > 0 else {
+        guard let feed = self.feed, let timestamp = self.timestamp else {
             completion(.empty)
             return
         }
-        completion(.found(feed: cache.first!.feeds, timestamp: cache.first!.timestamp))
+        completion(.found(feed: feed, timestamp: timestamp))
     }
 }
 
@@ -60,9 +62,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 
 	func test_insert_deliversNoErrorOnEmptyCache() {
-//		let sut = makeSUT()
-//
-//		assertThatInsertDeliversNoErrorOnEmptyCache(on: sut)
+		let sut = makeSUT()
+
+		assertThatInsertDeliversNoErrorOnEmptyCache(on: sut)
 	}
 
 	func test_insert_deliversNoErrorOnNonEmptyCache() {
