@@ -13,6 +13,8 @@ public class InMemoryFeedStore: FeedStore {
     private var feed: [LocalFeedImage]?
     private var timestamp: Date?
 
+    public init() {}
+
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         self.feed = nil
         self.timestamp = nil
