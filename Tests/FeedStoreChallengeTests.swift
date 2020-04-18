@@ -11,13 +11,15 @@ class InMemoryFeedStore: FeedStore {
     private var timestamp: Date?
 
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        completion(nil)
+        self.feed = nil
+        self.timestamp = nil
+        completion(.none)
     }
 
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
         self.feed = feed
         self.timestamp = timestamp
-        completion(nil)
+        completion(.none)
     }
 
     func retrieve(completion: @escaping RetrievalCompletion) {
@@ -98,9 +100,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 
 	func test_delete_emptiesPreviouslyInsertedCache() {
-//		let sut = makeSUT()
-//
-//		assertThatDeleteEmptiesPreviouslyInsertedCache(on: sut)
+		let sut = makeSUT()
+
+		assertThatDeleteEmptiesPreviouslyInsertedCache(on: sut)
 	}
 
 	func test_storeSideEffects_runSerially() {
