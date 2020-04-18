@@ -7,16 +7,23 @@ import FeedStoreChallenge
 
 class InMemoryFeedStore: FeedStore {
 
+    private var cache: [(feeds: [LocalFeedImage], timestamp: Date)] = []
+
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         fatalError("Not implemented yet.")
     }
 
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        fatalError("Not implemented yet.")
+        self.cache.append((feeds: feed, timestamp: timestamp))
+        completion(nil)
     }
 
     func retrieve(completion: @escaping RetrievalCompletion) {
-        completion(.empty)
+        guard self.cache.count > 0 else {
+            completion(.empty)
+            return
+        }
+        completion(.found(feed: cache.first!.feeds, timestamp: cache.first!.timestamp))
     }
 }
 
@@ -41,9 +48,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 
 	func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
-//		let sut = makeSUT()
-//
-//		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
+		let sut = makeSUT()
+
+		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
 	}
 
 	func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
